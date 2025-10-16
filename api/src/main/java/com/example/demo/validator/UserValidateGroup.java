@@ -1,0 +1,8 @@
+package com.example.demo.validator;
+
+public interface UserValidateGroup {
+
+    public interface Create {}
+
+    public interface Update {}
+}

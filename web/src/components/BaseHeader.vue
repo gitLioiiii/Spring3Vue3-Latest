@@ -1,0 +1,71 @@
+<template>
+  <header class="base-header">
+    <h1 class="base-header-logo">
+      <RouterLink to="/">
+        <strong>慧医数字医疗应用系统</strong>
+      </RouterLink>
+    </h1>
+    <nav class="base-header-navigator">
+      <RouterLink :to="{ name: 'login' }">登录</RouterLink>
+    </nav>
+  </header>
+</template>
+
+<script setup>
+import { RouterLink } from 'vue-router'
+</script>
+
+<style>
+.base-header {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #0da5aa;
+  height: 5rem;
+  width: 100%;
+  /* padding: 0rem 2rem; */
+
+  position: fixed;
+  top: 0rem;
+  left: 0rem;
+  z-index: 1000;
+
+  /* width: calc(100vw - 2rem * 2); */
+}
+
+.base-header-logo {
+  background: url('@/assets/img/logo.png') left center no-repeat;
+  background-size: contain;
+  margin: 0rem 0rem 0rem 2rem;
+  height: 4rem;
+  width: 20rem;
+}
+
+.base-header-logo a {
+  display: block;
+  outline: none;
+  height: 100%;
+  width: 100%;
+}
+
+.base-header-logo a strong {
+  display: none;
+}
+
+.base-header-navigator {
+  margin: 0rem 2rem 0rem 0rem;
+}
+
+/* rgba可设置可见度 */
+.base-header-navigator a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.base-header-navigator a:hover {
+  color: rgb(255, 255, 255, 1);
+}
+</style>
