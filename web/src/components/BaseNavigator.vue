@@ -24,6 +24,10 @@
             <img src="@/assets/icons/physician/数据.png" alt="数据" style="width: 16px; height: 16px; margin-right: 8px;" />
             数据直观图
           </ElMenuItem>
+          <ElMenuItem index="user_create" :route="{ name: 'user_create' }">
+            <img src="@/assets/icons/physician/用户.png" alt="用户界面" style="width: 16px; height: 16px; margin-right: 8px;" />
+            用户界面
+          </ElMenuItem>
       </ElSubMenu>
     </ElMenu>
   </nav>

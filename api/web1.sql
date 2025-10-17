@@ -11,7 +11,7 @@
  Target Server Version : 80406 (8.4.6)
  File Encoding         : 65001
 
- Date: 16/10/2025 16:32:57
+ Date: 17/10/2025 16:38:49
 */
 
 SET NAMES utf8mb4;
@@ -134,7 +134,7 @@ CREATE TABLE `pysician_office`  (
   `physicianId` int UNSIGNED NOT NULL COMMENT '医师ID',
   `officeId` int UNSIGNED NOT NULL COMMENT '科室ID',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '医师科室表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '医师科室表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pysician_office
@@ -147,14 +147,19 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `username` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户名',
+  `name` datetime NULL DEFAULT NULL COMMENT '姓名',
   `password` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '头像路径',
+  `deletedAt` datetime NULL DEFAULT NULL COMMENT '移除于',
+  `registeredAt` datetime NULL DEFAULT NULL COMMENT '注册于',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username`(`username` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, '123', '123');
+INSERT INTO `user` VALUES (20, '123', NULL, '123456', '/images/98c247fe-ea2d-4fbc-af4b-c9be7b95adeb黑色背景.png.png', NULL, '2025-10-17 16:37:25');
+INSERT INTO `user` VALUES (21, 'admin', NULL, '123456', '/images/1d33421b-e0de-4ab6-87fa-74579762a803雪花.png.png', NULL, '2025-10-17 16:37:57');
 
 SET FOREIGN_KEY_CHECKS = 1;

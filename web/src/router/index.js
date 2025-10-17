@@ -95,6 +95,24 @@ const router = createRouter({
         }
       ],
     },
+    // 用户·
+    {
+      path: '/user',
+      name: 'user_base',
+      component: () => import('@/views/physician/user/BaseView.vue'),
+      children: [
+        {
+          path: "",
+          name: 'user_index',
+          component: () => import('@/views/physician/user/IndexView.vue'),
+        },
+        {
+          path: "create",
+          name: 'user_create',
+          component: () => import('@/views/physician/user/CreateView.vue'),
+        },
+      ],
+    },
     {
       path: '/login',
       name: 'login',
