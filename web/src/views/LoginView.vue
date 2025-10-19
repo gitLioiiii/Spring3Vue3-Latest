@@ -2,10 +2,11 @@
   <article class="base-article">
 
     <ElCard style="max-width: 400px">
+    <!-- 没有 .prevent 时，点击“登录”或按回车会触发原生提交→页面刷新→状态清空→路由守卫检测到未登录→跳回登录页。加上它就能避免这个循环。 -->
     <ElForm
       ref="form"
       :model="model"
-      @submit="save"
+      @submit.prevent="login"
       :rules="rules"
       label-width="80"
       label-position="left"
@@ -42,7 +43,10 @@
 import { ref, reactive } from 'vue'
 import { ElCard,ElForm,ElFormItem,ElInput,ElButton,ElMessage } from 'element-plus'
 import { useRouter,RouterLink } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
+import request from '@/utils/request'
+import { useUserStore } from '@/stores/user'
+const userStore = useUserStore()
 
 const form = ref(null)
 const router = useRouter()
@@ -62,28 +66,53 @@ const rules= reactive({
   ],
 })
 
-const save = (e) => {
-  e.preventDefault()
-  form.value
-    .validate()
-    .then((result) => {
-      if (result === true) {
-        // var formData = new FormData()
-        // formData.append('name', model.name)
-        // formData.append('description', model.description)
+// const save = (e) => {
+//   e.preventDefault()
+//   form.value
+//     .validate()
+//     .then((result) => {
+//       if (result === true) {
+//         // var formData = new FormData()
+//         // formData.append('name', model.name)
+//         // formData.append('description', model.description)
 
-        axios.post('http://localhost:8080/login', { ...model }).then((response) => {
-          if (response.data.status === true) {
-            ElMessage.success('登录成功！')
-            router.push({ name: 'index' })
-          } else {
-            ElMessage.error('登录失败！')
-          }
-        })
-      }
-    })
-    .catch(() => {
-      ElMessage.error('登录失败！')
+//         axios.post('http://localhost:8080/login', { ...model }).then((response) => {
+//           if (response.data.status === true) {
+//             ElMessage.success('登录成功！')
+//             router.push({ name: 'index' })
+//           } else {
+//             ElMessage.error('登录失败！')
+//           }
+//         })
+//       }
+//     })
+//     .catch(() => {
+//       ElMessage.error('登录失败！')
+//     })
+// }
+const login = () => {
+    form.value.validate().then((result) => {
+        if (result === true) {
+            request
+                // 发送登录请求
+                .post('/login', model)
+                .then((response) => {
+                    if (response.data.status === true) {
+
+                        // 保存用户信息到Store和本地存储
+                        userStore.login({ ...response.data.payload })
+                        userStore.cache('user', { ...response.data.payload })
+
+                        ElMessage.success('登录成功。')
+                        router.replace({ name: 'index' })
+                    } else {
+                        ElMessage.error('登录失败。')
+                    }
+                })
+                .catch(() => {
+                    ElMessage.error('登录失败。')
+                })
+        }
     })
 }
 </script>

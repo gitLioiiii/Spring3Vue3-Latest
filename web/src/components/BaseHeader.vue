@@ -6,13 +6,37 @@
       </RouterLink>
     </h1>
     <nav class="base-header-navigator">
-      <RouterLink :to="{ name: 'login' }">登录</RouterLink>
+      <template v-if="userStore.logged">
+          <strong>{{ userStore.name }}</strong>
+          <span @click.stop="logout">退出</span>
+      </template>
+      <RouterLink v-else :to="{ name: 'login' }">登录</RouterLink>
     </nav>
   </header>
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { useUserStore } from '@/stores/user'
+import request from '@/utils/request'
+
+const router = useRouter()
+const userStore = useUserStore()
+
+const logout = () => {
+    request
+        .post('/logout')
+        .then((response) => {
+            console.log(response)
+        })
+        .finally(() => {
+            userStore.logout()
+            userStore.clear('user')
+            ElMessage.success('已成功退出。')
+            router.push({ name: 'login' })
+        })
+}
 </script>
 
 <style>

@@ -23,6 +23,7 @@ public class UserTokensServiceImpl implements UserTokensService {
         );
     }
 
+    // 创建Token
     public Integer create(TokenEntity token) {
         return this.userTokensMapper.create(token);
     }

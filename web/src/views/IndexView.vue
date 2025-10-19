@@ -5,13 +5,6 @@
   </article>
 </template>
 
-<script setup>
-import axios from 'axios'
-
-axios.get('http://localhost:8080/').then((response) => {
-  console.log(response.data)
-})
-</script>
 
 <style lang="scss">
 @use "@/styles/element/rootConfig" as *;

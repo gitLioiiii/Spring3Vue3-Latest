@@ -50,19 +50,23 @@ public class SecurityController {
             throw new ValidateFailedException();
         }
 
+        // 验证用户名和密码
         UserEntity user = this.userService.fetch(fields.getUsername()).orElseThrow(
             () -> new LoginFailedException()
         );
+        // 用于加密后的密码进行校验，没有对为明文的密码进行校验
         if (!this.passwordEncoder.matches(fields.getPassword(), user.getPassword())) {
             throw new LoginFailedException();
         }
 
+        // 创建Token
         TokenEntity token	= new TokenEntity();
         token.setToken(UUID.randomUUID().toString());
         // 设置token有效时间
         token.setExpireAt(LocalDateTime.now().plusHours(2));
         token.setCreatedAt(LocalDateTime.now());
         token.setUserId(user.getId());
+        // 保存Token到数据库
         this.userTokensService.create(token);
 
         result.putPayload("user", user);

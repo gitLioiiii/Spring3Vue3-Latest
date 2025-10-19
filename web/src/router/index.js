@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -124,8 +125,35 @@ const router = createRouter({
       name: 'register',
       component: () => import('@/views/RegisterView.vue'),
       meta: { HideChrome: true },
+    },
+    {
+      path: '/denied',
+      name: 'denied',
+      component: () => import('@/views/DeniedView.vue'),
+      meta: { HideChrome: true },
     }
   ],
 })
+
+// 路由守卫
+router.beforeEach((to) => {
+    const userStore = useUserStore()
+
+    // 检查是否需要登录
+    if (to.name !== 'login' && !userStore.logged) {
+        return { name: 'login' }
+    }
+
+    // if (to?.meta?.authority) {
+    //     if (userStore.logged) {
+    //         if (!userStore.granted(to.meta.authority)) {
+    //             return { name: 'denied' }
+    //         }
+    //     } else {
+    //         return { name: 'login' }
+    //     }
+    // }
+})
+
 
 export default router
