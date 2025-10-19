@@ -3,6 +3,7 @@ package com.example.demo.service.implementation;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -19,20 +20,20 @@ public class UserServiceImpl implements UserService{
         this.userMapper = userMapper;
     }
 
-    @Override
-    public UserEntity login(String username, String password) {
-        return userMapper.login(username, password);
-    }
+    // @Override
+    // public UserEntity login(String username, String password) {
+    //     return userMapper.login(username, password);
+    // }
 
     @Override
     public List<UserEntity> fetch(Map<String, Object> filter) {
         return this.userMapper.find(filter);
     }
 
-    @Override
-    public UserEntity fetch(Integer id) {
-        return this.userMapper.findById(id);
-    }
+    // @Override
+    // public UserEntity fetch(Integer id) {
+    //     return this.userMapper.findById(id);
+    // }
 
     @Override
     public Integer create(UserEntity user) {
@@ -49,5 +50,25 @@ public class UserServiceImpl implements UserService{
         user.setDeletedAt(LocalDateTime.now());
 
         return this.userMapper.remove(user);
+    }
+
+
+    @Override
+    public Integer count(Map<String, Object> filter) {
+        return this.userMapper.count(filter);
+    }
+
+        @Override
+    public Optional<UserEntity> fetch(Integer id) {
+        return Optional.ofNullable(
+            this.userMapper.findById(id)
+        );
+    }
+
+    @Override
+    public Optional<UserEntity> fetch(String username) {
+        return Optional.ofNullable(
+            this.userMapper.findByUsername(username)
+        );
     }
 }

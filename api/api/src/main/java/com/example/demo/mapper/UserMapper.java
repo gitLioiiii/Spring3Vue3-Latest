@@ -15,8 +15,11 @@ import com.example.demo.entity.UserEntity;
 @Mapper
 public interface UserMapper {
     
-    @Select("SELECT * FROM user WHERE username = #{username} AND password = #{password}")
-    public UserEntity login(String username, String password);
+    // @Select("SELECT * FROM user WHERE username = #{username} AND password = #{password}")
+    // public UserEntity login(String username, String password);
+
+	@SelectProvider(type = UserSQLProvider.class, method = "count")
+    public Integer count(Map<String, Object> condition);
 
     @SelectProvider(type = UserSQLProvider.class, method = "find")
 	public List<UserEntity> find(Map<String, Object> condition);
@@ -28,8 +31,8 @@ public interface UserMapper {
 	public UserEntity findById(Integer id);
 
 	@Insert(
-			"INSERT INTO `user`(`username`, `password`, `avatar`, `registeredAt`) " + 
-			"VALUE(#{username}, #{password}, #{avatar}, #{registeredAt})"
+			"INSERT INTO `user`(`username`, `name`, `password`, `avatar`, `registeredAt`) " + 
+			"VALUE(#{username}, #{name}, #{password}, #{avatar}, #{registeredAt})"
 	)
 	@Options(useGeneratedKeys = true, keyProperty = "id", keyColumn="id")
 	public Integer create(UserEntity user);
@@ -52,5 +55,11 @@ public interface UserMapper {
 		"WHERE `id`=#{id}"
 	})
 	public Integer remove(UserEntity user);
+
+	@Select({
+        "SELECT * FROM `user`", 
+        "WHERE `deletedAt` IS NULL and `username`=#{username}"
+    })
+    public UserEntity findByUsername(String username);
 
 }

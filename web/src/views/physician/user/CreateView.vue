@@ -17,6 +17,9 @@
         <ElFormItem prop="username" label="账号" style="width:16rem">
             <ElInput v-model="model.username" placeholder="账号" />
         </ElFormItem>
+        <ElFormItem prop="name" label="姓名" style="width:16rem">
+            <ElInput v-model="model.name" placeholder="姓名" />
+        </ElFormItem>
         <ElFormItem prop="password" label="密码" style="width:16rem">
             <ElInput v-model="model.password" type="password" placeholder="密码" />
         </ElFormItem>
@@ -69,10 +72,11 @@ const save = () => {
                 // 处理头像数据
                 const userData = {
                     username: model.username,
+                    name: model.name,
                     password: model.password,
                     avatar: model.avatar.length > 0 ? model.avatar[0].filename : null
                 }
-                
+
                 request
                     .post('/user/create', userData)
                     .then((response) => {
@@ -80,10 +84,11 @@ const save = () => {
                             ElMessage.success('保存成功！')
                             router.push({ name: 'user_index' })
                         } else {
-                            ElMessage.error('保存失败！')
+                            ElMessage.error(response.data.message || '保存失败！')
                         }
                     })
-                    .catch(() => {
+                    .catch((error) => {
+                        console.error('创建用户失败:', error)
                         ElMessage.error('保存失败！')
                     })
             }

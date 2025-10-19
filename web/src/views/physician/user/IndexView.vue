@@ -24,6 +24,7 @@
         </template>
       </ElTableColumn>
       <ElTableColumn prop="username" label="账号"/>
+      <ElTableColumn prop="name" label="姓名"/>
       <ElTableColumn prop="password" label="密码">
         <template #default>
           <span>未对密码序列化</span>
@@ -50,7 +51,16 @@
         </template>
       </ElTableColumn>
     </ElTable>
-    
+
+    <ElPagination
+        layout="prev, pager, next, jumper, sizes, ->, total"
+        :page-sizes="[1, 5, 10, 20, 50, 100]"
+        v-model:current-page="pagination.currentPage"
+        v-model:page-size="pagination.pageSize"
+        :total="pagination.total"
+        background
+    />
+
 <!-- z-index放高点覆盖元素 -->
     <ElDrawer
       v-model="drawer"
@@ -64,6 +74,9 @@
       <ElForm ref="form" :model="model" label-width="80">
         <ElFormItem label="账号">
           <ElInput v-model="model.username" disabled />
+        </ElFormItem>
+        <ElFormItem label="姓名">
+          <ElInput v-model="model.name" placeholder="修改用户姓名" />
         </ElFormItem>
         <ElFormItem label="密码">
           <ElInput v-model="model.password" type="password" placeholder="修改用户密码" />
@@ -87,7 +100,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import {
   ElTable,
   ElTableColumn,
@@ -98,6 +111,7 @@ import {
   ElDrawer,
   ElForm,
   ElFormItem,
+  ElPagination,
   ElInput
 } from 'element-plus'
 import request from '@/utils/request'
@@ -109,25 +123,40 @@ import FileUploader from '@/components/FileUploader.vue'
 const users = ref([])
 const srcList = ref([])
 
-const fetch = () => {
-  let params = new URLSearchParams()
+const pagination = reactive({
+    currentPage: 1,
+    pageSize: 5,
+    total: 0,
+})
 
-  request.get('/user/', { params }).then((response) => {
-    if (response.data.status === true) {
-      users.value = response.data.payload.user
-      srcList.value = users.value
-        .filter(user => user.avatar)// 筛选出有头像的用户
-        .map(user => buildURL(user.avatar))// 将头像路径转换为完整URL
-    }
-  })
+const fetch = () => {
+    let params = new URLSearchParams()
+    params.append('page', pagination.currentPage)
+    params.append('pageSize', pagination.pageSize)
+
+    request.get('/user', { params }).then((response) => {
+        if (response.data.status === true) {
+            users.value = response.data.payload.users
+            Object.assign(pagination, response.data.payload.pagination)
+            // 更新头像预览列表
+            srcList.value = users.value
+                .filter(user => user.avatar)
+                .map(user => buildURL(user.avatar))
+        }
+    })
 }
 
-// 页面加载时获取数据
-fetch()
+watch(
+    () => [pagination.currentPage, pagination.pageSize],
+    () => {
+        fetch()
+    },
+    { immediate: true },
+)
 
 const remove = (row) => {
-    request.post(`/user/remove/${row.id}`).then((response) => {
-        if (response.data === true) {
+    request.post('/user/remove', row).then((response) => {
+        if (response.data.status === true) {
             fetch()
             ElMessage.success('移除成功！')
         } else {
@@ -163,20 +192,35 @@ const closeDrawer = () => {
 }
 
 const save = () => {
-  const payload = {
-    name: model.name,
-    password: model.password && model.password.length > 0 ? model.password : null,
-    avatar: model.avatarFiles.length > 0 ? model.avatarFiles[0].filename : null,
-  }
-  request.post(`/user/update/${model.id}`, payload).then((response) => {
-    if (response.status === 200) {
-      ElMessage.success('保存成功！')
-      closeDrawer()
-      fetch()
-    } else {
-      ElMessage.error('保存失败！')
-    }
-  }).catch(() => ElMessage.error('保存失败！'))
+    form.value
+        .validate()
+        .then((result) => {
+            if (result === true) {
+                // 构建更新数据，确保头像字段正确映射
+                const updateData = {
+                    id: model.id,
+                    name: model.name,
+                    password: model.password,
+                    avatar: model.avatarFiles.length > 0 ? model.avatarFiles[0].filename : model.avatar
+                }
+                
+                request
+                    .post('/user/update', updateData)
+                    .then((response) => {
+                        if (response.data.status === true) {
+                            ElMessage.success('保存成功！')
+                            closeDrawer()
+                            fetch() // 刷新列表
+                        } else {
+                            ElMessage.error('保存失败！')
+                        }
+                    })
+                    .catch(() => {
+                        ElMessage.error('保存失败！')
+                    })
+            }
+        })
+        .catch(() => {})
 }
 
 </script>

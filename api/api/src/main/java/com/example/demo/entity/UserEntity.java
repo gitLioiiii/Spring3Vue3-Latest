@@ -12,6 +12,12 @@ public class UserEntity {
 
     private Integer id;
 
+    @NotBlank(groups = {
+        UserValidateGroup.Create.class
+    })
+    @Size(min = 2, max = 16, groups = {
+        UserValidateGroup.Create.class
+    })
     private String username;
 
     private String name;

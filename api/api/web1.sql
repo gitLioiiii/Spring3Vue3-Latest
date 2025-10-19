@@ -11,7 +11,7 @@
  Target Server Version : 80406 (8.4.6)
  File Encoding         : 65001
 
- Date: 17/10/2025 16:38:49
+ Date: 19/10/2025 14:29:57
 */
 
 SET NAMES utf8mb4;
@@ -70,7 +70,7 @@ INSERT INTO `physician` VALUES (4, 'user4', NULL, '李商英', 29, '女', 0, 5, 
 INSERT INTO `physician` VALUES (5, 'user5', '113', '莫奇权', 45, '男', 0, 1, NULL, '18926789546', '在职', NULL);
 INSERT INTO `physician` VALUES (8, 'user6', '{bcrypt}$2a$10$RTyM8j/k8446VHqq0FvRTeyB1xu9uORK8eWaJER7zNL1x2hDWeN6W', '重明', 26, '男', 0, 6, NULL, '18867769990', '在职', '2025-09-30 21:07:26');
 INSERT INTO `physician` VALUES (9, 'user7', '{bcrypt}$2a$10$c7xFTFdSdZ8mxivqWoZw9u32v1n6CoL.TEtrY/IlOvpVK4E7mTryi', '伊宁', 20, '女', 11, 1, NULL, '17878966667', '在职', '2025-10-02 22:06:52');
-INSERT INTO `physician` VALUES (11, 'user8', '{bcrypt}$2a$10$hlUImHnGhWKDqPR6.X2vy.t.yEURxNpnyHNvqK0Pznq0YIgbHq/3a', '向阳', 57, '男', NULL, 1, NULL, '17685982228', '在职', '2025-10-13 14:57:53');
+INSERT INTO `physician` VALUES (11, 'user8', '{bcrypt}$2a$10$hlUImHnGhWKDqPR6.X2vy.t.yEURxNpnyHNvqK0Pznq0YIgbHq/3a', '向阳', 57, '男', NULL, 1, '2025-10-18 22:59:55', '17685982228', '在职', '2025-10-13 14:57:53');
 
 -- ----------------------------
 -- Table structure for physician_position
@@ -147,19 +147,43 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `username` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户名',
-  `name` datetime NULL DEFAULT NULL COMMENT '姓名',
+  `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '姓名',
   `password` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
   `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '头像路径',
   `deletedAt` datetime NULL DEFAULT NULL COMMENT '移除于',
   `registeredAt` datetime NULL DEFAULT NULL COMMENT '注册于',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username`(`username` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
 INSERT INTO `user` VALUES (20, '123', NULL, '123456', '/images/98c247fe-ea2d-4fbc-af4b-c9be7b95adeb黑色背景.png.png', NULL, '2025-10-17 16:37:25');
 INSERT INTO `user` VALUES (21, 'admin', NULL, '123456', '/images/1d33421b-e0de-4ab6-87fa-74579762a803雪花.png.png', NULL, '2025-10-17 16:37:57');
+INSERT INTO `user` VALUES (22, '1234', NULL, '{bcrypt}$2a$10$lTHMFOqmwBR9cDFQuvzEaeAAg9BTMnoNsloe9bla8DK.pOsgwcF4e', NULL, NULL, '2025-10-18 21:02:32');
+INSERT INTO `user` VALUES (23, '你好呀', NULL, '{bcrypt}$2a$10$nTrmi2yjDJqEbJ9zZD6VquoaRRWhWUZiDNdaLUMnFXEMW/fCYjXVq', NULL, NULL, '2025-10-18 22:03:26');
+INSERT INTO `user` VALUES (24, '你好吗', '你好', '{bcrypt}$2a$10$nsy/2IGnlP/AEEtiQvmSaOVBKiCf4tT1t0/jy4KhGesPRdc.dHxx.', NULL, NULL, '2025-10-18 22:33:32');
+
+-- ----------------------------
+-- Table structure for user_tokens
+-- ----------------------------
+DROP TABLE IF EXISTS `user_tokens`;
+CREATE TABLE `user_tokens`  (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `token` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '令牌',
+  `userId` int UNSIGNED NOT NULL COMMENT '用户ID',
+  `expireAt` datetime NOT NULL COMMENT '过期于',
+  `createdAt` datetime NOT NULL COMMENT '创建于',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `token`(`token` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户令牌表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user_tokens
+-- ----------------------------
+INSERT INTO `user_tokens` VALUES (1, 'fd5d27c0-7865-42a1-b27b-1cf0ec11bcac', 22, '2025-10-18 23:05:04', '2025-10-18 21:05:04');
+INSERT INTO `user_tokens` VALUES (2, '426d3bcf-024d-48db-bbbd-974781744213', 22, '2025-10-18 23:05:16', '2025-10-18 21:05:16');
+INSERT INTO `user_tokens` VALUES (3, '07c5a76e-9b93-46c7-9607-49faec1a84d4', 22, '2025-10-18 23:10:18', '2025-10-18 21:10:18');
 
 SET FOREIGN_KEY_CHECKS = 1;
