@@ -45,6 +45,7 @@ const upload = () => {
             // formData.append('key', 'value')
             // <input type="file" name="file" />
             formData.append('file', e.target.files[0], e.target.files[0]['name'])
+            // 图片保存路径为D:\Project\upload\images
             request.post('/upload/images', formData).then((response) => {
                 if (response.data.status === true) {
                     // console.log(response.data)

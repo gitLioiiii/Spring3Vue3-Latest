@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 
 const instance = axios.create({
   baseURL: import.meta.env.APP_BASE_URL,
@@ -15,5 +16,26 @@ instance.interceptors.request.use((config) => {
 
     return config
 })
+
+// 响应拦截器：处理token过期
+instance.interceptors.response.use(
+    (response) => {
+        return response
+    },
+    (error) => {
+        // 检查是否是401未授权错误
+        if (error.response && error.response.status === 401) {
+            const userStore = useUserStore()
+            const router = useRouter()
+            
+            // 清除用户登录状态
+            userStore.logout()
+            
+            // 跳转到登录页
+            router.push({ name: 'login' })
+        }
+        return Promise.reject(error)
+    }
+)
 
 export default instance

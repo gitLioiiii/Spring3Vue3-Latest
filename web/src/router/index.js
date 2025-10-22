@@ -144,6 +144,16 @@ router.beforeEach((to) => {
         return { name: 'login' }
     }
 
+    // 如果已登录但token过期，自动退出
+    if (userStore.logged && userStore.user?.token?.expireAt) {
+        const now = new Date()
+        const expireAt = new Date(userStore.user.token.expireAt)
+        if (now > expireAt) {
+            userStore.logout()
+            return { name: 'login' }
+        }
+    }
+
     // if (to?.meta?.authority) {
     //     if (userStore.logged) {
     //         if (!userStore.granted(to.meta.authority)) {

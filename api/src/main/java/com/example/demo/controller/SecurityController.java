@@ -64,6 +64,7 @@ public class SecurityController {
         token.setToken(UUID.randomUUID().toString());
         // 设置token有效时间
         token.setExpireAt(LocalDateTime.now().plusHours(2));
+        // token.setExpireAt(LocalDateTime.now().plusMinutes(3));
         token.setCreatedAt(LocalDateTime.now());
         token.setUserId(user.getId());
         // 保存Token到数据库
