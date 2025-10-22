@@ -63,6 +63,8 @@ public class SecurityConfiguration {
         //     cors.configurationSource(source);
         }).csrf(csrf -> {
             csrf.disable();
+        }).logout(logout -> {
+            logout.disable(); // 禁用默认的logout配置
         }).authorizeHttpRequests(authorize -> {
             authorize.anyRequest().permitAll();//允许所有请求
         });

@@ -61,6 +61,7 @@ public class SecurityController {
 
         // 创建Token
         TokenEntity token	= new TokenEntity();
+        //使用UUID生成token
         token.setToken(UUID.randomUUID().toString());
         // 设置token有效时间
         token.setExpireAt(LocalDateTime.now().plusHours(2));
@@ -73,6 +74,19 @@ public class SecurityController {
         result.putPayload("user", user);
         result.putPayload("token", token);
 
+        return result;
+    }
+
+    @PostMapping("/logout")
+    public ResultTemplate logout() {
+        ResultTemplate result = new ResultTemplate();
+        
+        // 退出登录的逻辑可以在这里处理
+        // 比如清除服务端的session、记录日志等
+        // 由于使用了token认证，前端只需要清除本地存储的token即可
+        
+        result.putPayload("message", "退出登录成功");
+        
         return result;
     }
 
