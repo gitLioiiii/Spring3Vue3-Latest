@@ -10,15 +10,22 @@ public interface PhysicianSQLProvider {
         return new SQL() {{
             SELECT("COUNT(*)");
             FROM("`physician`");
-            if (condition.get("keywords") != null) {
-                WHERE("`name` LIKE CONCAT('%', #{keywords}, '%')");
-                OR();
-                WHERE("`phone` LIKE CONCAT('%', #{keywords}, '%')");
+            // if (condition.get("keywords") != null) {
+            //     WHERE("phy.`name` LIKE CONCAT('%', #{keywords}, '%')");
+            //     OR();
+            //     WHERE("`phone` LIKE CONCAT('%', #{keywords}, '%')");
+            //     WHERE("`deletedAt` IS NULL");
+            
+            if (condition.get("keywords") != null && !condition.get("keywords").toString().trim().isEmpty()) {
+                WHERE("(`name` LIKE CONCAT('%', #{keywords}, '%') OR `phone` LIKE CONCAT('%', #{keywords}, '%'))");
             }
+            
             if (condition.get("officeId") != null && !condition.get("officeId").toString().isEmpty()) {
                 WHERE("`officeId` = #{officeId}");
             }
+
             WHERE("`deletedAt` IS NULL");
+
         }}.toString();
     }
 
@@ -31,15 +38,17 @@ public interface PhysicianSQLProvider {
             SELECT("off.description AS office_description");
             FROM("`physician` phy");
             LEFT_OUTER_JOIN("`office` off ON off.id = phy.officeId");
-            if (condition.get("keywords") != null) {
-                WHERE("phy.`name` LIKE CONCAT('%', #{keywords}, '%')");
-                OR();
-                WHERE("`phone` LIKE CONCAT('%', #{keywords}, '%')");
+            
+            if (condition.get("keywords") != null && !condition.get("keywords").toString().trim().isEmpty()) {
+                WHERE("(phy.`name` LIKE CONCAT('%', #{keywords}, '%') OR phy.`phone` LIKE CONCAT('%', #{keywords}, '%'))");
             }
+            
             if (condition.get("officeId") != null && !condition.get("officeId").toString().isEmpty()) {
                 WHERE("phy.`officeId` = #{officeId}");
             }
+
             WHERE("phy.`deletedAt` IS NULL");
+
             ORDER_BY("phy.`id` ASC");
             LIMIT("#{offset},#{limit}");
         }}.toString();
